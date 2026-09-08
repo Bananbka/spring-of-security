@@ -1,0 +1,35 @@
+### Reading list CRUD requests
+
+@baseUrl = http://localhost:8080
+
+### Create a book
+# @name createBook
+POST {{baseUrl}}/api/books
+Content-Type: application/json
+
+{
+  "title": "The Left Hand of Darkness",
+  "author": "Ursula K. Le Guin",
+  "status": "TO_READ"
+}
+
+> {% client.global.set("bookId", response.body.id); %}
+
+### Read all books
+GET {{baseUrl}}/api/books
+
+### Read one book
+GET {{baseUrl}}/api/books/{{bookId}}
+
+### Update the book
+PUT {{baseUrl}}/api/books/{{bookId}}
+Content-Type: application/json
+
+{
+  "title": "The Left Hand of Darkness",
+  "author": "Ursula K. Le Guin",
+  "status": "READING"
+}
+
+### Delete the book
+DELETE {{baseUrl}}/api/books/{{bookId}}
