@@ -1,6 +1,17 @@
 @baseUrl = http://localhost:8080
 @bookId = 1
-@basicAuth = dXNlcjpwYXNzd29yZA==
+@basicAuth = YWRtaW46YWRtaW4=
+
+### GET CSRF TOKEN
+# Run this request before POST, PUT, or DELETE.
+# The response stores the XSRF-TOKEN cookie for the following requests.
+# @name getCsrfToken
+GET {{baseUrl}}/api/csrf-token
+Authorization: Basic {{basicAuth}}
+
+> {% client.global.set("csrfToken", response.body.token); %}
+
+###
 
 ### GET ALL BOOKS
 GET {{baseUrl}}/api/books
@@ -17,6 +28,7 @@ Authorization: Basic {{basicAuth}}
 ### DELETE ONE BOOK
 DELETE {{baseUrl}}/api/books/{{bookId}}
 Authorization: Basic {{basicAuth}}
+X-XSRF-TOKEN: {{csrfToken}}
 
 
 
@@ -24,6 +36,7 @@ Authorization: Basic {{basicAuth}}
 POST {{baseUrl}}/api/books
 Content-Type: application/json
 Authorization: Basic {{basicAuth}}
+X-XSRF-TOKEN: {{csrfToken}}
 
 {
   "title": "The Left Hand of Darkness",
@@ -39,6 +52,7 @@ Authorization: Basic {{basicAuth}}
 PUT {{baseUrl}}/api/books/{{bookId}}
 Content-Type: application/json
 Authorization: Basic {{basicAuth}}
+X-XSRF-TOKEN: {{csrfToken}}
 
 {
   "title": "The Left Hand of Darkness",

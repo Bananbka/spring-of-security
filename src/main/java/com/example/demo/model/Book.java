@@ -1,16 +1,13 @@
-package com.example.demo.book;
+package com.example.demo.model;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import lombok.AccessLevel;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 
-@Entity
 @Getter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Entity
 public class Book {
 
     @Id
@@ -20,6 +17,9 @@ public class Book {
     private String title;
     private String author;
     private String status;
+
+    protected Book() {
+    }
 
     public Book(String title, String author, String status) {
         this.title = title;
