@@ -4,8 +4,13 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Entity
+@Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Book {
 
     @Id
@@ -16,29 +21,10 @@ public class Book {
     private String author;
     private String status;
 
-    protected Book() {
-    }
-
     public Book(String title, String author, String status) {
         this.title = title;
         this.author = author;
         this.status = status;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public String getAuthor() {
-        return author;
-    }
-
-    public String getStatus() {
-        return status;
     }
 
     public void updateFrom(BookRequest request) {

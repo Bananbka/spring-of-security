@@ -1,0 +1,47 @@
+@baseUrl = http://localhost:8080
+@bookId = 1
+@basicAuth = dXNlcjpwYXNzd29yZA==
+
+### GET ALL BOOKS
+GET {{baseUrl}}/api/books
+Authorization: Basic {{basicAuth}}
+
+
+
+### GET ONE BOOK
+GET {{baseUrl}}/api/books/{{bookId}}
+Authorization: Basic {{basicAuth}}
+
+
+
+### DELETE ONE BOOK
+DELETE {{baseUrl}}/api/books/{{bookId}}
+Authorization: Basic {{basicAuth}}
+
+
+
+### CREATE ONE BOOK
+POST {{baseUrl}}/api/books
+Content-Type: application/json
+Authorization: Basic {{basicAuth}}
+
+{
+  "title": "The Left Hand of Darkness",
+  "author": "Ursula K. Le Guin",
+  "status": "TO_READ"
+}
+
+> {% client.global.set("bookId", response.body.id); %}
+
+
+
+### UPDATE ONE BOOK
+PUT {{baseUrl}}/api/books/{{bookId}}
+Content-Type: application/json
+Authorization: Basic {{basicAuth}}
+
+{
+  "title": "The Left Hand of Darkness",
+  "author": "Ursula K. Le Guin",
+  "status": "READING"
+}
