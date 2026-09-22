@@ -45,3 +45,42 @@ Authorization: Basic {{basicAuth}}
   "author": "Ursula K. Le Guin",
   "status": "READING"
 }
+
+
+
+### GET ALL BOOKS - NO AUTH (expect 401)
+GET {{baseUrl}}/api/books
+
+
+
+### GET ONE BOOK - NO AUTH (expect 401)
+GET {{baseUrl}}/api/books/{{bookId}}
+
+
+
+### DELETE ONE BOOK - NO AUTH (expect 401)
+DELETE {{baseUrl}}/api/books/{{bookId}}
+
+
+
+### CREATE ONE BOOK - NO AUTH (expect 401)
+POST {{baseUrl}}/api/books
+Content-Type: application/json
+
+{
+  "title": "The Left Hand of Darkness",
+  "author": "Ursula K. Le Guin",
+  "status": "TO_READ"
+}
+
+
+
+### UPDATE ONE BOOK - NO AUTH (expect 401)
+PUT {{baseUrl}}/api/books/{{bookId}}
+Content-Type: application/json
+
+{
+  "title": "The Left Hand of Darkness",
+  "author": "Ursula K. Le Guin",
+  "status": "READING"
+}
