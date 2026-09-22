@@ -2,6 +2,12 @@
 @bookId = 1
 @basicAuth = YWRtaW46YWRtaW4=
 
+### ADMIN-ONLY ENDPOINT
+GET {{baseUrl}}/api/admin/hello
+Authorization: Basic {{basicAuth}}
+
+###
+
 ### GET CSRF TOKEN
 # Run this request before POST, PUT, or DELETE.
 # The response stores the XSRF-TOKEN cookie for the following requests.
@@ -12,25 +18,6 @@ Authorization: Basic {{basicAuth}}
 > {% client.global.set("csrfToken", response.body.token); %}
 
 ###
-
-### GET ALL BOOKS
-GET {{baseUrl}}/api/books
-Authorization: Basic {{basicAuth}}
-
-
-
-### GET ONE BOOK
-GET {{baseUrl}}/api/books/{{bookId}}
-Authorization: Basic {{basicAuth}}
-
-
-
-### DELETE ONE BOOK
-DELETE {{baseUrl}}/api/books/{{bookId}}
-Authorization: Basic {{basicAuth}}
-X-XSRF-TOKEN: {{csrfToken}}
-
-
 
 ### CREATE ONE BOOK
 POST {{baseUrl}}/api/books
@@ -48,6 +35,18 @@ X-XSRF-TOKEN: {{csrfToken}}
 
 
 
+### GET ALL BOOKS
+GET {{baseUrl}}/api/books
+Authorization: Basic {{basicAuth}}
+
+
+
+### GET ONE BOOK
+GET {{baseUrl}}/api/books/{{bookId}}
+Authorization: Basic {{basicAuth}}
+
+
+
 ### UPDATE ONE BOOK
 PUT {{baseUrl}}/api/books/{{bookId}}
 Content-Type: application/json
@@ -59,3 +58,10 @@ X-XSRF-TOKEN: {{csrfToken}}
   "author": "Ursula K. Le Guin",
   "status": "READING"
 }
+
+
+
+### DELETE ONE BOOK
+DELETE {{baseUrl}}/api/books/{{bookId}}
+Authorization: Basic {{basicAuth}}
+X-XSRF-TOKEN: {{csrfToken}}
