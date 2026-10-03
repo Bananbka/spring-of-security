@@ -1,0 +1,100 @@
+@baseUrl = http://localhost:8080
+@bookId = 1
+@adminAuth = YWRtaW46YWRtaW4=
+@userAuth = dXNlcjp1c2Vy
+@superadminAuth = c3VwZXJhZG1pbjpzdXBlcmFkbWlu
+
+### SETUP: GET CSRF TOKEN (not counted)
+# @name getCsrfToken
+GET {{baseUrl}}/api/csrf-token
+Authorization: Basic {{adminAuth}}
+
+> {% client.global.set("csrfToken", response.body.token); %}
+
+###
+
+### 1. ADMIN creates a book -> 201
+POST {{baseUrl}}/api/books
+Content-Type: application/json
+Authorization: Basic {{adminAuth}}
+X-XSRF-TOKEN: {{csrfToken}}
+
+{
+  "title": "The Left Hand of Darkness",
+  "author": "Ursula K. Le Guin",
+  "status": "TO_READ"
+}
+
+> {% client.global.set("bookId", response.body.id); %}
+
+###
+
+### 2. USER lists books -> 200
+GET {{baseUrl}}/api/books
+Authorization: Basic {{userAuth}}
+
+###
+
+### 3. USER reads one book -> 200
+GET {{baseUrl}}/api/books/{{bookId}}
+Authorization: Basic {{userAuth}}
+
+###
+
+### 4. USER tries to create a book -> 403
+POST {{baseUrl}}/api/books
+Content-Type: application/json
+Authorization: Basic {{userAuth}}
+X-XSRF-TOKEN: {{csrfToken}}
+
+{
+  "title": "Dune",
+  "author": "Frank Herbert",
+  "status": "TO_READ"
+}
+
+###
+
+### 5. ADMIN updates a book -> 200
+PUT {{baseUrl}}/api/books/{{bookId}}
+Content-Type: application/json
+Authorization: Basic {{adminAuth}}
+X-XSRF-TOKEN: {{csrfToken}}
+
+{
+  "title": "The Left Hand of Darkness",
+  "author": "Ursula K. Le Guin",
+  "status": "READING"
+}
+
+###
+
+### 6. USER tries to delete a book -> 403
+DELETE {{baseUrl}}/api/books/{{bookId}}
+Authorization: Basic {{userAuth}}
+X-XSRF-TOKEN: {{csrfToken}}
+
+###
+
+### 7. ADMIN deletes a book -> 204
+DELETE {{baseUrl}}/api/books/{{bookId}}
+Authorization: Basic {{adminAuth}}
+X-XSRF-TOKEN: {{csrfToken}}
+
+###
+
+### 8. ADMIN accesses admin-only endpoint -> 200
+GET {{baseUrl}}/api/admin/hello
+Authorization: Basic {{adminAuth}}
+
+###
+
+### 9. USER accesses admin-only endpoint -> 403
+GET {{baseUrl}}/api/admin/hello
+Authorization: Basic {{userAuth}}
+
+###
+
+### 10. SUPERADMIN accesses superadmin-only endpoint -> 200
+GET {{baseUrl}}/api/superadmin/hello
+Authorization: Basic {{superadminAuth}}
