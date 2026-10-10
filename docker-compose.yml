@@ -7,7 +7,7 @@ services:
       POSTGRES_USER: reading_list
       POSTGRES_PASSWORD: reading_list
     ports:
-      - "5433:5432"
+      - "15433:5432"
     volumes:
       - postgres-data:/var/lib/postgresql/data
 
