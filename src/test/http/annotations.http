@@ -1,0 +1,99 @@
+@baseUrl = http://localhost:8080
+@bookId = 1
+@adminAuth = YWRtaW46YWRtaW4=
+@userAuth = dXNlcjp1c2Vy
+@superadminAuth = c3VwZXJhZG1pbjpzdXBlcmFkbWlu
+
+### SETUP: GET CSRF TOKEN (not counted)
+# @name getCsrfToken
+GET {{baseUrl}}/api/csrf-token
+Authorization: Basic {{adminAuth}}
+
+> {% client.global.set("csrfToken", response.body.token); %}
+
+###
+
+### 1. ADMIN creates a book -> 201 (@PreAuthorize("hasRole('ADMIN')") on POST /api/books)
+POST {{baseUrl}}/api/books
+Content-Type: application/json
+Authorization: Basic {{adminAuth}}
+X-XSRF-TOKEN: {{csrfToken}}
+
+{
+  "title": "The Left Hand of Darkness",
+  "author": "Ursula K. Le Guin",
+  "status": "TO_READ"
+}
+
+> {% client.global.set("bookId", response.body.id); %}
+
+###
+
+### 2. USER lists books -> 200 (@PreAuthorize("hasAnyRole('USER','ADMIN')") on GET /api/books)
+GET {{baseUrl}}/api/books
+Authorization: Basic {{userAuth}}
+
+###
+
+### 3. SUPERADMIN lists books -> 403 (no USER/ADMIN role, denied by annotation)
+GET {{baseUrl}}/api/books
+Authorization: Basic {{superadminAuth}}
+
+###
+
+### 4. ADMIN reads one book -> 200 (@PreAuthorize("hasAnyRole('USER','ADMIN')") on GET /api/books/{id})
+GET {{baseUrl}}/api/books/{{bookId}}
+Authorization: Basic {{adminAuth}}
+
+###
+
+### 5. USER tries to update a book -> 403 (@PreAuthorize("hasRole('ADMIN')") on PUT /api/books/{id})
+PUT {{baseUrl}}/api/books/{{bookId}}
+Content-Type: application/json
+Authorization: Basic {{userAuth}}
+X-XSRF-TOKEN: {{csrfToken}}
+
+{
+  "title": "The Left Hand of Darkness",
+  "author": "Ursula K. Le Guin",
+  "status": "READING"
+}
+
+###
+
+### 6. ADMIN updates a book -> 200
+PUT {{baseUrl}}/api/books/{{bookId}}
+Content-Type: application/json
+Authorization: Basic {{adminAuth}}
+X-XSRF-TOKEN: {{csrfToken}}
+
+{
+  "title": "The Left Hand of Darkness",
+  "author": "Ursula K. Le Guin",
+  "status": "READING"
+}
+
+###
+
+### 7. USER tries to delete a book -> 403 (@PreAuthorize("hasRole('ADMIN')") on DELETE /api/books/{id})
+DELETE {{baseUrl}}/api/books/{{bookId}}
+Authorization: Basic {{userAuth}}
+X-XSRF-TOKEN: {{csrfToken}}
+
+###
+
+### 8. ADMIN accesses admin-only route -> 200 (class-level @PreAuthorize("hasRole('ADMIN')") on AdminController)
+GET {{baseUrl}}/api/admin/hello
+Authorization: Basic {{adminAuth}}
+
+###
+
+### 9. USER accesses admin-only route -> 403
+GET {{baseUrl}}/api/admin/hello
+Authorization: Basic {{userAuth}}
+
+###
+
+### 10. SUPERADMIN accesses superadmin-only route -> 200 (class-level @PreAuthorize("hasRole('SUPERADMIN')") on SuperAdminController)
+GET {{baseUrl}}/api/superadmin/hello
+Authorization: Basic {{superadminAuth}}

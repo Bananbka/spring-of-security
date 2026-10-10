@@ -4,6 +4,7 @@ import com.example.demo.model.Book;
 import com.example.demo.model.BookRequest;
 import com.example.demo.service.BookService;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -26,27 +27,32 @@ public class BookController {
         this.bookService = bookService;
     }
 
+    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     @GetMapping
     public List<Book> findAll() {
         return bookService.findAll();
     }
 
+    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     @GetMapping("/{id}")
     public Book findById(@PathVariable long id) {
         return bookService.findById(id);
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping
     public ResponseEntity<Book> create(@RequestBody BookRequest request) {
         Book book = bookService.create(request);
         return ResponseEntity.created(URI.create("/api/books/" + book.getId())).body(book);
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/{id}")
     public Book update(@PathVariable long id, @RequestBody BookRequest request) {
         return bookService.update(id, request);
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable long id) {
         bookService.delete(id);
