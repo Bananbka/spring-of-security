@@ -1,0 +1,32 @@
+@baseUrl = http://localhost:8080
+
+### Authenticate as ADMIN -> returns a JWT
+POST {{baseUrl}}/api/v1/auth/authenticate
+Content-Type: application/json
+
+{
+  "username": "admin",
+  "password": "admin"
+}
+
+###
+
+### Authenticate as USER -> returns a JWT
+POST {{baseUrl}}/api/v1/auth/authenticate
+Content-Type: application/json
+
+{
+  "username": "user",
+  "password": "user"
+}
+
+###
+
+### Authenticate as SUPERADMIN -> returns a JWT
+POST {{baseUrl}}/api/v1/auth/authenticate
+Content-Type: application/json
+
+{
+  "username": "superadmin",
+  "password": "superadmin"
+}
