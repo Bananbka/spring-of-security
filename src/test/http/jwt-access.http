@@ -48,13 +48,25 @@ Authorization: Bearer {{userToken}}
 
 ###
 
-### 5. SUPERADMIN Bearer token -> GET /api/books -> 403 (wrong role for this route)
+### 5. ADMIN Bearer token -> GET /api/books -> 200 (USER/ADMIN allowed)
+GET {{baseUrl}}/api/books
+Authorization: Bearer {{adminToken}}
+
+###
+
+### 6. SUPERADMIN Bearer token -> GET /api/books -> 403 (wrong role for this route)
 GET {{baseUrl}}/api/books
 Authorization: Bearer {{superadminToken}}
 
 ###
 
-### 6. ADMIN Bearer token -> POST /api/books -> 201 (ADMIN-only write)
+### 7. No token -> GET /api/books -> 401 (unauthenticated)
+GET {{baseUrl}}/api/books
+
+###
+
+### 8. ADMIN Bearer token -> POST /api/books -> 201 (ADMIN-only write)
+# @name createBook
 POST {{baseUrl}}/api/books
 Authorization: Bearer {{adminToken}}
 Content-Type: application/json
@@ -65,9 +77,11 @@ Content-Type: application/json
   "status": "TO_READ"
 }
 
+> {% client.global.set("bookId", response.body.id); %}
+
 ###
 
-### 7. USER Bearer token -> POST /api/books -> 403 (USER cannot write)
+### 9. USER Bearer token -> POST /api/books -> 403 (USER cannot write)
 POST {{baseUrl}}/api/books
 Authorization: Bearer {{userToken}}
 Content-Type: application/json
@@ -80,18 +94,87 @@ Content-Type: application/json
 
 ###
 
-### 8. ADMIN Bearer token -> GET /api/admin/hello -> 200 (ADMIN-only route)
+### 10. SUPERADMIN Bearer token -> POST /api/books -> 403 (SUPERADMIN cannot write)
+POST {{baseUrl}}/api/books
+Authorization: Bearer {{superadminToken}}
+Content-Type: application/json
+
+{
+  "title": "The Left Hand of Darkness",
+  "author": "Ursula K. Le Guin",
+  "status": "TO_READ"
+}
+
+###
+
+### 11. ADMIN Bearer token -> PUT /api/books/{{bookId}} -> 200 (ADMIN-only write)
+PUT {{baseUrl}}/api/books/{{bookId}}
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json
+
+{
+  "title": "The Left Hand of Darkness",
+  "author": "Ursula K. Le Guin",
+  "status": "READING"
+}
+
+###
+
+### 12. USER Bearer token -> PUT /api/books/{{bookId}} -> 403 (USER cannot write)
+PUT {{baseUrl}}/api/books/{{bookId}}
+Authorization: Bearer {{userToken}}
+Content-Type: application/json
+
+{
+  "title": "The Left Hand of Darkness",
+  "author": "Ursula K. Le Guin",
+  "status": "READING"
+}
+
+###
+
+### 13. ADMIN Bearer token -> DELETE /api/books/{{bookId}} -> 204 (ADMIN-only write)
+DELETE {{baseUrl}}/api/books/{{bookId}}
+Authorization: Bearer {{adminToken}}
+
+###
+
+### 14. USER Bearer token -> DELETE /api/books/{{bookId}} -> 403 (USER cannot write)
+DELETE {{baseUrl}}/api/books/{{bookId}}
+Authorization: Bearer {{userToken}}
+
+###
+
+### 15. ADMIN Bearer token -> GET /api/admin/hello -> 200 (ADMIN-only route)
 GET {{baseUrl}}/api/admin/hello
 Authorization: Bearer {{adminToken}}
 
 ###
 
-### 9. USER Bearer token -> GET /api/admin/hello -> 403 (wrong role)
+### 16. USER Bearer token -> GET /api/admin/hello -> 403 (wrong role)
 GET {{baseUrl}}/api/admin/hello
 Authorization: Bearer {{userToken}}
 
 ###
 
-### 10. SUPERADMIN Bearer token -> GET /api/superadmin/hello -> 200 (SUPERADMIN-only route)
+### 17. SUPERADMIN Bearer token -> GET /api/admin/hello -> 403 (wrong role)
+GET {{baseUrl}}/api/admin/hello
+Authorization: Bearer {{superadminToken}}
+
+###
+
+### 18. SUPERADMIN Bearer token -> GET /api/superadmin/hello -> 200 (SUPERADMIN-only route)
 GET {{baseUrl}}/api/superadmin/hello
 Authorization: Bearer {{superadminToken}}
+
+###
+
+### 19. ADMIN Bearer token -> GET /api/superadmin/hello -> 403 (wrong role)
+GET {{baseUrl}}/api/superadmin/hello
+Authorization: Bearer {{adminToken}}
+
+###
+
+### 20. USER Bearer token -> GET /api/superadmin/hello -> 403 (wrong role)
+GET {{baseUrl}}/api/superadmin/hello
+Authorization: Bearer {{userToken}}
