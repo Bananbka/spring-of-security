@@ -4,6 +4,8 @@ import com.example.demo.config.SecurityConfig;
 import com.example.demo.controller.AdminController;
 import com.example.demo.controller.BookController;
 import com.example.demo.controller.SuperAdminController;
+import com.example.demo.jwt.JwtAuthenticationFilter;
+import com.example.demo.jwt.JwtService;
 import com.example.demo.model.Book;
 import com.example.demo.service.BookService;
 import org.junit.jupiter.api.Test;
@@ -32,7 +34,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * admin / user / superadmin accounts declared in {@link SecurityConfig}.
  */
 @WebMvcTest(controllers = {BookController.class, AdminController.class, SuperAdminController.class})
-@Import(SecurityConfig.class)
+@Import({SecurityConfig.class, JwtAuthenticationFilter.class, JwtService.class})
 class AccessControlTests {
 
     @Autowired

@@ -1,0 +1,97 @@
+@baseUrl = http://localhost:8080
+
+### 1. Login as ADMIN -> 200, returns JWT (sub=admin, authorities=ROLE_ADMIN)
+# @name loginAdmin
+POST {{baseUrl}}/api/v1/auth/authenticate
+Content-Type: application/json
+
+{
+  "username": "admin",
+  "password": "admin"
+}
+
+> {% client.global.set("adminToken", response.body.token); %}
+
+###
+
+### 2. Login as USER -> 200, returns JWT (sub=user, authorities=ROLE_USER)
+# @name loginUser
+POST {{baseUrl}}/api/v1/auth/authenticate
+Content-Type: application/json
+
+{
+  "username": "user",
+  "password": "user"
+}
+
+> {% client.global.set("userToken", response.body.token); %}
+
+###
+
+### 3. Login as SUPERADMIN -> 200, returns JWT (sub=superadmin, authorities=ROLE_SUPERADMIN)
+# @name loginSuperadmin
+POST {{baseUrl}}/api/v1/auth/authenticate
+Content-Type: application/json
+
+{
+  "username": "superadmin",
+  "password": "superadmin"
+}
+
+> {% client.global.set("superadminToken", response.body.token); %}
+
+###
+
+### 4. USER Bearer token -> GET /api/books -> 200 (USER/ADMIN allowed)
+GET {{baseUrl}}/api/books
+Authorization: Bearer {{userToken}}
+
+###
+
+### 5. SUPERADMIN Bearer token -> GET /api/books -> 403 (wrong role for this route)
+GET {{baseUrl}}/api/books
+Authorization: Bearer {{superadminToken}}
+
+###
+
+### 6. ADMIN Bearer token -> POST /api/books -> 201 (ADMIN-only write)
+POST {{baseUrl}}/api/books
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json
+
+{
+  "title": "The Left Hand of Darkness",
+  "author": "Ursula K. Le Guin",
+  "status": "TO_READ"
+}
+
+###
+
+### 7. USER Bearer token -> POST /api/books -> 403 (USER cannot write)
+POST {{baseUrl}}/api/books
+Authorization: Bearer {{userToken}}
+Content-Type: application/json
+
+{
+  "title": "The Left Hand of Darkness",
+  "author": "Ursula K. Le Guin",
+  "status": "TO_READ"
+}
+
+###
+
+### 8. ADMIN Bearer token -> GET /api/admin/hello -> 200 (ADMIN-only route)
+GET {{baseUrl}}/api/admin/hello
+Authorization: Bearer {{adminToken}}
+
+###
+
+### 9. USER Bearer token -> GET /api/admin/hello -> 403 (wrong role)
+GET {{baseUrl}}/api/admin/hello
+Authorization: Bearer {{userToken}}
+
+###
+
+### 10. SUPERADMIN Bearer token -> GET /api/superadmin/hello -> 200 (SUPERADMIN-only route)
+GET {{baseUrl}}/api/superadmin/hello
+Authorization: Bearer {{superadminToken}}
